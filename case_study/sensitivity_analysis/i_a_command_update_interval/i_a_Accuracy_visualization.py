@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-# ── 定数・設定 ─────────────────────────────────────────
+# ── Constants and configuration ─────────────────────────
 ROOT = os.getcwd()
 BASE_DIR = os.path.join(ROOT, "case_study/sensitivity_analysis/i_a_command_update_interval/accuracy")
 OUT_DIR = os.path.join(ROOT, "case_study/sensitivity_analysis/i_a_command_update_interval/figures")
@@ -15,27 +15,27 @@ METHOD_DIRS = {
     'CorEuc': 'Correlation_Euclidean'
 }
 
-METHODS      = ['CorEuc', 'CorrDTW', 'Corr']
-LABELS       = {
+METHODS = ['CorEuc', 'CorrDTW', 'Corr']
+LABELS = {
     'CorEuc':  'Correlation-Euclidean',
     'CorrDTW': 'Correlation-DTW',
     'Corr':    'Baseline (Correlation)'
 }
-COLORS       = {
+COLORS = {
     'CorEuc':  '#228b22',
     'CorrDTW': '#ff8c00',
     'Corr':    '#376ea4'
 }
-MARKERS      = {'CorEuc':'s', 'CorrDTW':'o', 'Corr':'^'}
-LINESTYLES   = {'CorEuc':'-', 'CorrDTW':'-', 'Corr':'dashed'}
+MARKERS = {'CorEuc': 's', 'CorrDTW': 'o', 'Corr': '^'}
+LINESTYLES = {'CorEuc': '-', 'CorrDTW': '-', 'Corr': 'dashed'}
 
-TAU_LIST     = [30, 35, 40, 45, 50, 55, 60]
+TAU_LIST = [30, 35, 40, 45, 50, 55, 60]
 EV_INTERVALS = [30, 60]
 NUM_PATTERNS = 300
 
 
 def get_filename(method: str, ev_int: int, tau: int) -> str:
-    """メソッドごとのCSVファイル名を返す"""
+    """Return the CSV filename for each method."""
     if method == 'Corr':
         return f"{NUM_PATTERNS}p_evint{ev_int}_tau{tau}_CorrAcc.csv"
     if method == 'CorrDTW':
@@ -45,7 +45,7 @@ def get_filename(method: str, ev_int: int, tau: int) -> str:
 
 
 def load_accuracy(ev_int: int) -> dict[str, list[float]]:
-    """各メソッド・各tauの平均正答率を収集"""
+    """Collect the mean accuracy (%) for each method and each τ."""
     avg_pct = {m: [] for m in METHODS}
     for tau in TAU_LIST:
         for m in METHODS:
@@ -67,10 +67,10 @@ def load_accuracy(ev_int: int) -> dict[str, list[float]]:
 def plot_bar(avg_pct: dict[str, list[float]], ev_int: int) -> None:
     x = np.arange(len(TAU_LIST))
     width = 0.25
-    fig, ax = plt.subplots(figsize=(11,7))
+    fig, ax = plt.subplots(figsize=(11, 7))
     for i, m in enumerate(METHODS):
         ax.bar(
-            x + (i-1)*width,
+            x + (i - 1) * width,
             avg_pct[m],
             width,
             label=LABELS[m],
@@ -80,7 +80,8 @@ def plot_bar(avg_pct: dict[str, list[float]], ev_int: int) -> None:
     ax.set_axisbelow(True)
     ax.set_xlabel('Interval for updating command value [s]', fontsize=26)
     ax.set_ylabel('Accuracy [%]', fontsize=26)
-    ax.set_xticks(x);      ax.set_xticklabels(TAU_LIST, fontsize=20)
+    ax.set_xticks(x)
+    ax.set_xticklabels(TAU_LIST, fontsize=20)
     ax.tick_params(axis='y', labelsize=20)
     ax.set_ylim(0, 102)
     ax.grid(axis='y', linestyle='--', alpha=0.5)
@@ -94,7 +95,7 @@ def plot_bar(avg_pct: dict[str, list[float]], ev_int: int) -> None:
 
 
 def plot_line(avg_pct: dict[str, list[float]], ev_int: int) -> None:
-    fig, ax = plt.subplots(figsize=(11,7))
+    fig, ax = plt.subplots(figsize=(11, 7))
     ax.set_axisbelow(True)
     for m in METHODS:
         ax.plot(
@@ -109,7 +110,8 @@ def plot_line(avg_pct: dict[str, list[float]], ev_int: int) -> None:
         )
     ax.set_xlabel('Interval for updating command value [sec]', fontsize=26, labelpad=10)
     ax.set_ylabel('Accuracy [%]', fontsize=26)
-    ax.set_xticks(TAU_LIST);  ax.tick_params(axis='x', labelsize=20, length=5)
+    ax.set_xticks(TAU_LIST)
+    ax.tick_params(axis='x', labelsize=20, length=5)
     ax.tick_params(axis='y', labelsize=20, length=5)
     ax.set_ylim(0, 102)
     ax.yaxis.set_major_locator(plt.MultipleLocator(10))
